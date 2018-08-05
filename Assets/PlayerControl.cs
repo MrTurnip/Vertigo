@@ -41,15 +41,30 @@ public class PlayerControl : MonoBehaviour
         SubscribeToUnityEvent(activePhase, listener);
     }
 
-    private void SubscribeToOnUpdate(UnityAction listener)
+    private void SubscribeToOnFall(UnityAction listener)
     {
-        SubscribeToUnityEvent(onUpdate, listener);
+        SubscribeToUnityEvent(onFall, listener);
     }
 
     public void SubscribeFallOffCheck()
     {
         Level level = GameObject.FindObjectOfType<Level>();
-        SubscribeToOnUpdate(level.CheckFallOff);
+        SubscribeToOnFall(level.CheckFallOff);
+    }
+
+    public void SubscribePhysicsObservation()
+    {
+        onUpdate.AddListener(ObserveVelocity);
+    }
+
+    private void ObserveVelocity()
+    {
+        Vector3 velocity = rigidbody.velocity;
+        float yVelocity = velocity.y;
+        if (yVelocity < -1.0f)
+        {
+            onFall.Invoke();
+        }
     }
 
     private void GetInput()
@@ -86,6 +101,8 @@ public class PlayerControl : MonoBehaviour
         EnableMovement();
 
         SubscribeFallOffCheck();
+
+        SubscribePhysicsObservation();
     }
 
     public void Update()
