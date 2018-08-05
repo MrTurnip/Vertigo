@@ -1,0 +1,30 @@
+Vertigo. A game of confusion while trying to navigate a winding platform.
+Gameplay consists of 10 levels, each consisting of a winding platform with an exit-flag at the end. You play as a marble trying to roll across without falling off. During gameplay your camera's view will slowly rotate (clockwise or counter-clockwise) while your controls remain direct. 
+As the levels progress the paths become narrowers and narrower, with special traps along the way to push you off. 
+ 
+Level difficulty is rated by how many turns you need to make. Each level includes an extra turn.
+After the fifth level traps are featured with the difficulty; these traps punish bad timing in movement. 
+The goal of the game is to make it as far as you can without dying; once you run out of lives the game is over.
+You get 3 lives.
+
+Ball collides with platforms. (Complete)
+Ball can be rotated to roll with WASD.
+Ball resets level after falling off.
+Player runs out of lives and resets game.
+Advance to next level upon reaching victory flag.
+Camera follows ball.
+Camera rotates.
+Create first level. 1 turn.
+Create second level. 2 turns.
+Create third level. 3 turns.
+Create forth level. 4 turns.
+Create fifth level. 5 turns. 1 trap.
+Create sixth level. 6 turns. 2 traps.
+Create seventh level. 7 turns. 3 traps.
+Create eigth level. 8 turns. 4 traps.
+Create ninth level. 9 turns. 5 traps.
+Create tenth level. 10 turns. 6 traps.
+Create main-menu scene. Contains play-button.
+
+Aesthetics?
+Crumbling sandstone and magic?
