@@ -8,7 +8,8 @@ The goal of the game is to make it as far as you can without dying; once you run
 You get 3 lives.
 
 Ball collides with platforms. (Complete)
-Ball can be rotated to roll with WASD.
+Ball can be rotated to roll with WASD. (Complete)
+b. Allow fast and slow movement. (Complete)
 Ball resets level after falling off.
 Player runs out of lives and resets game.
 Advance to next level upon reaching victory flag.
