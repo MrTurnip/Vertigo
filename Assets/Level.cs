@@ -47,6 +47,9 @@ public class Level : MonoBehaviour {
         }
     }
 
+    // Notes.
+    // Remove Reset class and its members; centralize the Reset process to the ResetScene script. 
+
     public void Start()
     {
         reset = new Reset(this);
