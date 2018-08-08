@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class PlayerControl : MonoBehaviour
+public class PlayerControl : MonoBehaviour, IReset
 {
     private UnityEvent activePhase = new UnityEvent();
     private UnityEvent onUpdate = new UnityEvent();
@@ -23,13 +23,45 @@ public class PlayerControl : MonoBehaviour
             }
         }
     }
+    private bool lifeDeducted = false;
 
+    public const int MAX_LIVES = 3;
+    public const string LIVESREMAINING = "LivesRemaining";
+    public int livesRemaining = MAX_LIVES;
     public enum SpeedSetting { full, half, stopped }
     public SpeedSetting speedSetting;
     public bool canMove = true;
     public const float fullSpeed = 2.5f;
     public const float halfSpeed = 1.0f;
     public const float stopped = 0.0f;
+
+    public void LaunchResetProcess()
+    {
+        Debug.Log("Player reset.");
+    }
+
+    public void RegisterToCollection()
+    {
+        Level level = GameObject.FindObjectOfType<Level>();
+        level.resetObjects.Add(this);
+    }
+
+    public void LoseLife()
+    {
+        if (lifeDeducted)
+            return;
+
+        livesRemaining--;
+        lifeDeducted = true;
+
+        if (livesRemaining == 0)
+        {
+            Debug.Log("Out of lives. Restoring.");
+            livesRemaining = MAX_LIVES;
+        }
+
+       // PlayerPrefs.SetInt(LIVESREMAINING, livesRemaining);
+    }
 
     private void SubscribeToUnityEvent(UnityEvent targetEvent, UnityAction listener)
     {
@@ -50,6 +82,7 @@ public class PlayerControl : MonoBehaviour
     {
         Level level = GameObject.FindObjectOfType<Level>();
         SubscribeToOnFall(level.CheckFallOff);
+       
     }
 
     public void SubscribePhysicsObservation()
@@ -94,6 +127,16 @@ public class PlayerControl : MonoBehaviour
         SubscribeToActivePhase(RollRigidbody);
     }
 
+    public void Awake()
+    {
+        if (PlayerPrefs.GetInt(LIVESREMAINING, -1) == -1)
+        {
+            PlayerPrefs.SetInt(LIVESREMAINING, MAX_LIVES);
+        }
+
+        livesRemaining = PlayerPrefs.GetInt(LIVESREMAINING);
+    }
+
     public void Start()
     {
         rigidbody = this.GetComponent<Rigidbody>();
@@ -103,6 +146,8 @@ public class PlayerControl : MonoBehaviour
         SubscribeFallOffCheck();
 
         SubscribePhysicsObservation();
+
+        RegisterToCollection();
     }
 
     public void Update()
@@ -111,4 +156,6 @@ public class PlayerControl : MonoBehaviour
 
         onUpdate.Invoke();
     }
+
+   
 }

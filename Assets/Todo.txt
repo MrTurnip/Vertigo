@@ -9,9 +9,12 @@ You get 3 lives.
 
 Ball collides with platforms. (Complete)
 Ball can be rotated to roll with WASD. (Complete)
-b. Allow fast and slow movement. (Complete)
-Ball resets level after falling off.
-Player runs out of lives and resets game.
+a. Allow fast and slow movement. (Complete)
+Ball resets level after falling off. (Redoing)<-
+a. Disable VictoryFlag.
+b. Display cause-of-death banner.
+Player runs out of lives and resets game. (Delayed)
+a. Reset to level 0.
 Advance to next level upon reaching victory flag.
 Camera follows ball.
 Camera rotates.
