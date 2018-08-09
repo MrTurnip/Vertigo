@@ -63,7 +63,6 @@
   <ItemGroup>
     <Compile Include="Assets\Level.cs" />
     <Compile Include="Assets\PlayerControl.cs" />
-    <Compile Include="Assets\ResetScene.cs" />
     <Compile Include="Assets\ScreenFade.cs" />
     <None Include="Assets\Todo.txt" />
     <Reference Include="UnityEditor.StandardEvents">

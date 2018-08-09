@@ -1,26 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class ScreenFade : MonoBehaviour, IReset
+public class ScreenFade : MonoBehaviour
 {
-    ResetPhase resetPhase = ResetPhase.notReseting;
-    private System.Action resetProcess = delegate { };
     SpriteRenderer spriteRenderer;
 
     public float transitionTime;
     private float rate;
     private float progress;
+    private System.Action Action = delegate { };
+    public UnityEvent OnFinishReset = new UnityEvent();
 
-    public void LaunchResetProcess()
+    public void FadeToBlack() { }
+    
+    private void ResetFadeProcess()
     {
-        Debug.Log("ScreenFade reset.");
-    }
-
-    public void RegisterToCollection()
-    {
-        Level level = GameObject.FindObjectOfType<Level>();
-        level.resetObjects.Add(this);
+        spriteRenderer.color = new Color(1, 1, 1, 0);
+        progress = 0;
     }
 
     private void LerpOpacityToFull()
@@ -32,16 +30,13 @@ public class ScreenFade : MonoBehaviour, IReset
 
         if (progress >= 1.0f)
         {
-            resetPhase = ResetPhase.finished;
+            OnFinishReset.Invoke();
+            ResetFadeProcess();
+            Action = delegate { };
         }
     }
 
-    private void StartResetProcess()
-    {
-        resetPhase = ResetPhase.reseting;
-
-    }
-
+ 
     private void Awake()
     {
 
@@ -50,25 +45,17 @@ public class ScreenFade : MonoBehaviour, IReset
     // Use this for initialization
     void Start()
     {
-        //ResetScene resetScene = GameObject.FindObjectOfType<ResetScene>();
-        //resetScene.levelReset += StartResetProcess;
-        //spriteRenderer = this.GetComponent<SpriteRenderer>();
-
-        RegisterToCollection();
-
-        resetProcess += LerpOpacityToFull;
-
+        spriteRenderer = GetComponent<SpriteRenderer>();
         rate = 1.0f / ((float)Application.targetFrameRate * transitionTime);
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (resetPhase == ResetPhase.reseting)
-        {
-            resetProcess();
-        }
+        Action();
+        
     }
 
-
+   
 }

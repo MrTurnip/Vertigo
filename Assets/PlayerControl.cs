@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class PlayerControl : MonoBehaviour, IReset
+public class PlayerControl : MonoBehaviour
 {
-    private UnityEvent activePhase = new UnityEvent();
-    private UnityEvent onUpdate = new UnityEvent();
-    private UnityEvent onFall = new UnityEvent();
+    public enum Phase { None, ActiveControl, ResetStart, ResetProcessing, ResetExecute }
+    public Phase activePhase = Phase.None;
+
     private Vector3 direction = new Vector2();
     private Rigidbody rigidbody;
     private Vector3 momentum { get { return direction * Speed; } }
@@ -24,6 +24,8 @@ public class PlayerControl : MonoBehaviour, IReset
         }
     }
     private bool lifeDeducted = false;
+    public System.Action Action = delegate { };
+    public UnityEvent OnFall = new UnityEvent();
 
     public const int MAX_LIVES = 3;
     public const string LIVESREMAINING = "LivesRemaining";
@@ -34,69 +36,75 @@ public class PlayerControl : MonoBehaviour, IReset
     public const float fullSpeed = 2.5f;
     public const float halfSpeed = 1.0f;
     public const float stopped = 0.0f;
+    public Vector3 startingPosition;
+    public float resetTimer = 1.5f;
 
-    public void LaunchResetProcess()
+
+    
+
+    public void SwitchToActiveAtStart()
     {
-        Debug.Log("Player reset.");
+        if (this.activePhase == Phase.ActiveControl)
+            return;
+
+        this.activePhase = Phase.ActiveControl;
+
+        this.transform.position = startingPosition;
+        this.rigidbody.velocity = Vector3.zero;
+
+        Action = delegate { };
+        Action += GetInput;
+        Action += RollRigidbody;
+        Action += CheckIfFall;
     }
 
-    public void RegisterToCollection()
+    public void SwitchToResetStart()
     {
-        Level level = GameObject.FindObjectOfType<Level>();
-        level.resetObjects.Add(this);
+        if (this.activePhase == Phase.ResetStart)
+            return;
+
+        this.activePhase = Phase.ResetStart;
+
+        Action = delegate { };
+        Action += LoseLife;
+        Action += SwitchToResetProcess;
+
+        Debug.Log("Reset start.");
+    }
+
+    public void SwitchToResetProcess()
+    {
+        if (this.activePhase == Phase.ResetProcessing)
+            return;
+
+        this.activePhase = Phase.ResetProcessing;
+
+        Action = delegate { };
+        Action += delegate { resetTimer -= Time.deltaTime; if (resetTimer <= 0) SwitchToResetExecute();  };
+
+        Debug.Log("Reset process.");
+    }
+
+    public void SwitchToResetExecute()
+    {
+        if (this.activePhase == Phase.ResetExecute)
+            return;
+
+        this.activePhase = Phase.ResetExecute;
+
+        Action = delegate { };
+        Action += SwitchToActiveAtStart;
+
+        Debug.Log("Reset finalized.");
     }
 
     public void LoseLife()
     {
-        if (lifeDeducted)
-            return;
-
         livesRemaining--;
-        lifeDeducted = true;
 
         if (livesRemaining == 0)
         {
-            Debug.Log("Out of lives. Restoring.");
             livesRemaining = MAX_LIVES;
-        }
-
-       // PlayerPrefs.SetInt(LIVESREMAINING, livesRemaining);
-    }
-
-    private void SubscribeToUnityEvent(UnityEvent targetEvent, UnityAction listener)
-    {
-        targetEvent.AddListener(listener);
-    }
-
-    private void SubscribeToActivePhase(UnityAction listener)
-    {
-        SubscribeToUnityEvent(activePhase, listener);
-    }
-
-    private void SubscribeToOnFall(UnityAction listener)
-    {
-        SubscribeToUnityEvent(onFall, listener);
-    }
-
-    public void SubscribeFallOffCheck()
-    {
-        Level level = GameObject.FindObjectOfType<Level>();
-        SubscribeToOnFall(level.CheckFallOff);
-       
-    }
-
-    public void SubscribePhysicsObservation()
-    {
-        onUpdate.AddListener(ObserveVelocity);
-    }
-
-    private void ObserveVelocity()
-    {
-        Vector3 velocity = rigidbody.velocity;
-        float yVelocity = velocity.y;
-        if (yVelocity < -1.0f)
-        {
-            onFall.Invoke();
         }
     }
 
@@ -104,7 +112,7 @@ public class PlayerControl : MonoBehaviour, IReset
     {
         // If the player can't move then there's no point in getting any input.
         if (!canMove)
-            return; 
+            return;
 
         // Gets vertical and horizontal input as 0-1 values then assigns them to direction.
         float xAxis = Input.GetAxis("Horizontal");
@@ -121,41 +129,37 @@ public class PlayerControl : MonoBehaviour, IReset
         this.rigidbody.angularVelocity = momentum;
     }
 
-    public void EnableMovement()
+    private void CheckIfFall()
     {
-        SubscribeToActivePhase(GetInput);
-        SubscribeToActivePhase(RollRigidbody);
+        Vector3 velocity = rigidbody.velocity;
+        float yVelocity = velocity.y;
+        if (yVelocity <= -1.0f)
+        {
+            OnFall.Invoke();
+        }
     }
+
 
     public void Awake()
     {
-        if (PlayerPrefs.GetInt(LIVESREMAINING, -1) == -1)
-        {
-            PlayerPrefs.SetInt(LIVESREMAINING, MAX_LIVES);
-        }
+        startingPosition = this.transform.position;
 
-        livesRemaining = PlayerPrefs.GetInt(LIVESREMAINING);
     }
 
     public void Start()
     {
         rigidbody = this.GetComponent<Rigidbody>();
 
-        EnableMovement();
+        SwitchToActiveAtStart();
 
-        SubscribeFallOffCheck();
-
-        SubscribePhysicsObservation();
-
-        RegisterToCollection();
+        Level level = GameObject.FindObjectOfType<Level>();
+        OnFall.AddListener(level.CheckFallOff);
     }
 
     public void Update()
     {
-        activePhase.Invoke();
-
-        onUpdate.Invoke();
+        Action();
     }
 
-   
+
 }
