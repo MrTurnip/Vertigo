@@ -5,10 +5,53 @@ using UnityEngine.Events;
 
 public class Level : MonoBehaviour
 {
-    public enum ResetFunction { Launch, Process, Finish }
+    public bool inState = false;
     public float lowestPoint;
     private GameObject playerObject;
     public UnityEvent OnOutOfBounds = new UnityEvent();
+    public const float maxResetTime = 1.0f;
+    public float resetTimer = maxResetTime;
+    public System.Action Action = delegate { };
+
+    private void SwitchResetStateToLaunch()
+    {
+        if (inState)
+            return;
+        inState = true;
+
+        Action = delegate { };
+        Action += SwitchResetStateToProcess;
+        Action += delegate { inState = false; };
+    }
+    private void SwitchResetStateToProcess()
+    {
+        if (inState)
+            return;
+        inState = true;
+
+        Action = delegate { };
+        Action += delegate
+        {
+            resetTimer -= Time.deltaTime;
+            
+            if (resetTimer <= 0)
+            {
+                inState = false;
+                SwitchResetStateToFinalize();
+            }
+        };
+
+    }
+
+    private void SwitchResetStateToFinalize()
+    {
+        if (inState)
+            return;
+        inState = true;
+
+        Action = delegate { };
+        Action += delegate { resetTimer = maxResetTime; Action = delegate { }; inState = false; };
+    }
 
     public void CheckFallOff()
     {
@@ -33,9 +76,11 @@ public class Level : MonoBehaviour
 
         OnOutOfBounds.AddListener(screenFade.FadeToBlack);
         OnOutOfBounds.AddListener(playerControl.SwitchToResetStart);
+        OnOutOfBounds.AddListener(this.SwitchResetStateToLaunch);
     }
 
     public void Update()
     {
+        Action();
     }
 }

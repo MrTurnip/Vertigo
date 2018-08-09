@@ -26,6 +26,7 @@ public class PlayerControl : MonoBehaviour
     private bool lifeDeducted = false;
     public System.Action Action = delegate { };
     public UnityEvent OnFall = new UnityEvent();
+    private Level level;
 
     public const int MAX_LIVES = 3;
     public const string LIVESREMAINING = "LivesRemaining";
@@ -37,11 +38,8 @@ public class PlayerControl : MonoBehaviour
     public const float halfSpeed = 1.0f;
     public const float stopped = 0.0f;
     public Vector3 startingPosition;
-    public float resetTimer = 1.5f;
-
-
+    public float resetTimer { get { return level.resetTimer; }}
     
-
     public void SwitchToActiveAtStart()
     {
         if (this.activePhase == Phase.ActiveControl)
@@ -68,8 +66,7 @@ public class PlayerControl : MonoBehaviour
         Action = delegate { };
         Action += LoseLife;
         Action += SwitchToResetProcess;
-
-        Debug.Log("Reset start.");
+        
     }
 
     public void SwitchToResetProcess()
@@ -80,9 +77,8 @@ public class PlayerControl : MonoBehaviour
         this.activePhase = Phase.ResetProcessing;
 
         Action = delegate { };
-        Action += delegate { resetTimer -= Time.deltaTime; if (resetTimer <= 0) SwitchToResetExecute();  };
-
-        Debug.Log("Reset process.");
+        Action += delegate {if (resetTimer <= 0) SwitchToResetExecute();  };
+        
     }
 
     public void SwitchToResetExecute()
@@ -94,8 +90,7 @@ public class PlayerControl : MonoBehaviour
 
         Action = delegate { };
         Action += SwitchToActiveAtStart;
-
-        Debug.Log("Reset finalized.");
+        
     }
 
     public void LoseLife()
@@ -152,7 +147,7 @@ public class PlayerControl : MonoBehaviour
 
         SwitchToActiveAtStart();
 
-        Level level = GameObject.FindObjectOfType<Level>();
+        level = GameObject.FindObjectOfType<Level>();
         OnFall.AddListener(level.CheckFallOff);
     }
 
