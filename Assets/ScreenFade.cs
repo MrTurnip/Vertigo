@@ -13,35 +13,19 @@ public class ScreenFade : MonoBehaviour
     private System.Action Action = delegate { };
     public UnityEvent OnFinishReset = new UnityEvent();
     public Level level;
-    private bool inState = false;
     private float resetTimer { get { return level.resetTimer; } }
-
-
-    public void FadeToBlack()
+    
+    public void StartFadingProcess()
     {
-        if (inState)
-            return;
-
-        inState = true;
-
-        Action += LerpOpacityToFull;
+        Action = LerpOpacityToFull;
         Action += delegate
          {
              if (resetTimer <= 0)
              {
-                 ResetFadeProcess();
+                 ResetVeilToBlack();
                  Action = delegate { };
              }
          };
-
-    }
-
-    private void ResetFadeProcess()
-    {
-        spriteRenderer.color = new Color(1, 1, 1, 0);
-
-        Debug.Log(resetTimer);
-        progress = 0;
     }
 
     private void LerpOpacityToFull()
@@ -50,14 +34,15 @@ public class ScreenFade : MonoBehaviour
         color = Color.Lerp(Color.clear, Color.white, progress);
         progress += rate;
         spriteRenderer.color = color;
-
-        if (progress >= 1.0f)
-        {
-            Action = delegate { };
-        }
     }
 
-
+    private void ResetVeilToBlack()
+    {
+        spriteRenderer.color = new Color(1, 1, 1, 0);
+        
+        progress = 0;
+    }
+    
     private void Awake()
     {
 
@@ -75,7 +60,6 @@ public class ScreenFade : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         Action();
     }
 

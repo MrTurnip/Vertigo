@@ -12,6 +12,7 @@ public class Level : MonoBehaviour
     public const float maxResetTime = 1.0f;
     public float resetTimer = maxResetTime;
     public System.Action Action = delegate { };
+    public bool isResetting = false;
 
     private void SwitchResetStateToLaunch()
     {
@@ -50,16 +51,22 @@ public class Level : MonoBehaviour
         inState = true;
 
         Action = delegate { };
-        Action += delegate { resetTimer = maxResetTime; Action = delegate { }; inState = false; };
+        Action += delegate { resetTimer = maxResetTime; Action = delegate { }; inState = false; isResetting = false; };
     }
 
     public void CheckFallOff()
     {
+        if (isResetting)
+            return; 
+
         Vector3 playerPosition = playerObject.transform.position;
         float playerY = playerPosition.y;
         if (playerY <= lowestPoint)
         {
             OnOutOfBounds.Invoke();
+
+            // Ensures that this method is only ran once. 
+            isResetting = true;
         }
     }
 
@@ -73,10 +80,12 @@ public class Level : MonoBehaviour
         playerObject = GameObject.FindGameObjectWithTag("Player");
         PlayerControl playerControl = playerObject.GetComponent<PlayerControl>();
         ScreenFade screenFade = GameObject.FindObjectOfType<ScreenFade>();
+        CameraRotation cameraRotation = GameObject.FindObjectOfType<CameraRotation>();
 
-        OnOutOfBounds.AddListener(screenFade.FadeToBlack);
+        OnOutOfBounds.AddListener(screenFade.StartFadingProcess);
         OnOutOfBounds.AddListener(playerControl.SwitchToResetStart);
         OnOutOfBounds.AddListener(this.SwitchResetStateToLaunch);
+        OnOutOfBounds.AddListener(cameraRotation.GetResetStart());
     }
 
     public void Update()

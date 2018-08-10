@@ -64,7 +64,6 @@ public class PlayerControl : MonoBehaviour
         this.activePhase = Phase.ResetStart;
 
         Action = delegate { };
-        Action += LoseLife;
         Action += SwitchToResetProcess;
         
     }
@@ -89,6 +88,7 @@ public class PlayerControl : MonoBehaviour
         this.activePhase = Phase.ResetExecute;
 
         Action = delegate { };
+        Action += LoseLife;
         Action += SwitchToActiveAtStart;
         
     }
@@ -96,6 +96,8 @@ public class PlayerControl : MonoBehaviour
     public void LoseLife()
     {
         livesRemaining--;
+
+        Debug.Log("Deducting life.");
 
         if (livesRemaining == 0)
         {
