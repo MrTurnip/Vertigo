@@ -27,10 +27,11 @@ public class PlayerControl : MonoBehaviour
     public System.Action Action = delegate { };
     public UnityEvent OnFall = new UnityEvent();
     private Level level;
+    private LivesRemaining livesRemaining;
 
+    public UnityEvent OnDeath = new UnityEvent();
     public const int MAX_LIVES = 3;
     public const string LIVESREMAINING = "LivesRemaining";
-    public int livesRemaining = MAX_LIVES;
     public enum SpeedSetting { full, half, stopped }
     public SpeedSetting speedSetting;
     public bool canMove = true;
@@ -39,6 +40,7 @@ public class PlayerControl : MonoBehaviour
     public const float stopped = 0.0f;
     public Vector3 startingPosition;
     public float resetTimer { get { return level.resetTimer; }}
+
     
     public void SwitchToActiveAtStart()
     {
@@ -49,6 +51,9 @@ public class PlayerControl : MonoBehaviour
 
         this.transform.position = startingPosition;
         this.rigidbody.velocity = Vector3.zero;
+
+        if (livesRemaining.isGameOver)
+            canMove = false;
 
         Action = delegate { };
         Action += GetInput;
@@ -63,7 +68,7 @@ public class PlayerControl : MonoBehaviour
 
         this.activePhase = Phase.ResetStart;
 
-        Action = delegate { };
+        Action = delegate { OnDeath.Invoke(); };
         Action += SwitchToResetProcess;
         
     }
@@ -88,22 +93,10 @@ public class PlayerControl : MonoBehaviour
         this.activePhase = Phase.ResetExecute;
 
         Action = delegate { };
-        Action += LoseLife;
         Action += SwitchToActiveAtStart;
-        
     }
 
-    public void LoseLife()
-    {
-        livesRemaining--;
 
-        Debug.Log("Deducting life.");
-
-        if (livesRemaining == 0)
-        {
-            livesRemaining = MAX_LIVES;
-        }
-    }
 
     private void GetInput()
     {
@@ -140,12 +133,13 @@ public class PlayerControl : MonoBehaviour
     public void Awake()
     {
         startingPosition = this.transform.position;
-
     }
 
     public void Start()
     {
         rigidbody = this.GetComponent<Rigidbody>();
+        livesRemaining = GameObject.FindObjectOfType<LivesRemaining>();
+        OnDeath.AddListener(livesRemaining.LoseLife);
 
         SwitchToActiveAtStart();
 

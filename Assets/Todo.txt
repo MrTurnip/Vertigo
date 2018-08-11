@@ -12,22 +12,26 @@ Ball can be rotated to roll with WASD. (Complete)
 a. Allow fast and slow movement. 
 Ball resets level after falling off. (Complete)
 a. Disable VictoryFlag.
-b. Display cause-of-death banner.
-Player runs out of lives and resets game. (Delayed)
+Player runs out of lives and resets game. (Complete)
+a. GameOver banner displays. (Complete)
 a. Reset to level 0.
 Advance to next level upon reaching victory flag.
 Camera follows ball.
 Camera rotates.
+Create Cave background.
 Create first level. 1 turn.
 Create second level. 2 turns.
 Create third level. 3 turns.
+Create River background.
 Create forth level. 4 turns.
 Create fifth level. 5 turns. 1 trap.
 Create sixth level. 6 turns. 2 traps.
+Create Lava background.
 Create seventh level. 7 turns. 3 traps.
 Create eigth level. 8 turns. 4 traps.
 Create ninth level. 9 turns. 5 traps.
-Create tenth level. 10 turns. 6 traps.
+Create Greenery background
+Create tenth level. 0 turns. 0 traps.
 Create main-menu scene. Contains play-button.
 
 Aesthetics?

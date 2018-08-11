@@ -62,7 +62,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\CameraRotation.cs" />
+    <Compile Include="Assets\GameOverBanner.cs" />
     <Compile Include="Assets\Level.cs" />
+    <Compile Include="Assets\LivesRemaining.cs" />
     <Compile Include="Assets\PlayerControl.cs" />
     <Compile Include="Assets\ScreenFade.cs" />
     <None Include="Assets\Todo.txt" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class Level : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class Level : MonoBehaviour
     public float resetTimer = maxResetTime;
     public System.Action Action = delegate { };
     public bool isResetting = false;
+    public bool outOfLives = false;
+    public LivesRemaining livesRemaining;
 
     private void SwitchResetStateToLaunch()
     {
@@ -34,7 +37,7 @@ public class Level : MonoBehaviour
         Action += delegate
         {
             resetTimer -= Time.deltaTime;
-            
+
             if (resetTimer <= 0)
             {
                 inState = false;
@@ -50,14 +53,42 @@ public class Level : MonoBehaviour
             return;
         inState = true;
 
+        if (livesRemaining.isGameOver)
+        {
+            Action = delegate { };
+            Action += SwitchToGameOver;
+            inState = false;
+            return;
+        }
+
         Action = delegate { };
         Action += delegate { resetTimer = maxResetTime; Action = delegate { }; inState = false; isResetting = false; };
+    }
+
+    private void SwitchToGameOver()
+    {
+        if (inState)
+            return;
+        inState = true;
+
+        resetTimer = maxResetTime * 2;
+        Action = WaitUntilFullOver;
+    }
+
+    private void WaitUntilFullOver()
+    {
+        resetTimer -= Time.deltaTime;
+
+        if (resetTimer <= 0)
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 
     public void CheckFallOff()
     {
         if (isResetting)
-            return; 
+            return;
 
         Vector3 playerPosition = playerObject.transform.position;
         float playerY = playerPosition.y;

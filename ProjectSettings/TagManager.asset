@@ -15,8 +15,8 @@ TagManager:
   - 
   - PostProcessing
   - Surface
-  - 
-  - 
+  - Gameworld
+  - Display
   - 
   - 
   - 
@@ -40,4 +40,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 1384396843
     locked: 0

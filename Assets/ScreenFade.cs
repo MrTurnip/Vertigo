@@ -14,7 +14,8 @@ public class ScreenFade : MonoBehaviour
     public UnityEvent OnFinishReset = new UnityEvent();
     public Level level;
     private float resetTimer { get { return level.resetTimer; } }
-    
+    public LivesRemaining livesRemaining;
+
     public void StartFadingProcess()
     {
         Action = LerpOpacityToFull;
@@ -22,7 +23,14 @@ public class ScreenFade : MonoBehaviour
          {
              if (resetTimer <= 0)
              {
-                 ResetVeilToBlack();
+                 bool isGameOver = livesRemaining.isGameOver;
+                 if (isGameOver)
+                 {
+                     Action = delegate { MaintainBlack(); };
+                     return;
+                 }
+
+                 ResetVeilToClear();
                  Action = delegate { };
              }
          };
@@ -36,13 +44,18 @@ public class ScreenFade : MonoBehaviour
         spriteRenderer.color = color;
     }
 
-    private void ResetVeilToBlack()
+    private void ResetVeilToClear()
     {
         spriteRenderer.color = new Color(1, 1, 1, 0);
-        
+
         progress = 0;
     }
-    
+
+    private void MaintainBlack()
+    {
+        spriteRenderer.color = Color.white;
+    }
+
     private void Awake()
     {
 
@@ -55,6 +68,8 @@ public class ScreenFade : MonoBehaviour
         rate = 1.0f / ((float)Application.targetFrameRate * transitionTime);
 
         level = GameObject.FindObjectOfType<Level>();
+
+        livesRemaining = GameObject.FindObjectOfType<LivesRemaining>();
     }
 
     // Update is called once per frame
