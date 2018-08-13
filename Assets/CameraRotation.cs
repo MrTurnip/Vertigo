@@ -17,6 +17,9 @@ public class CameraRotation : MonoBehaviour
     // How many times per second the camera makes a complete rotation.
     public float rotationsPerSecond;
 
+    // Scaled from 0 to 1 to regulate the total rate of rotation.
+    public float power = 1.0f;
+
     // The amount of degrees in a circle.
     const int radius = 360;
 
@@ -24,7 +27,7 @@ public class CameraRotation : MonoBehaviour
     float rate { get { return radius * rotationsPerSecond; } }
 
     // Will eventually contain the reset parameters.
-    System.Action ResetMode = delegate { };
+    System.Action AlternateMode = delegate { };
 
     // Is used during reset to return the camera to its starting position.
     Vector3 startingPosition;
@@ -35,11 +38,22 @@ public class CameraRotation : MonoBehaviour
     // A reference to level.cs, which contains the resetTimer.
     Level level;
 
+    public void SlowToHalt()
+    {
+        AlternateMode = delegate
+        {
+            if (power > 0)
+                power -= 1f * Time.deltaTime;
+            else
+                power = 0;
+        };
+    }
+
     // Called once per frame, it rotates the camera's Z-axis to make the scene spin.
     void RotateZ()
     {
         // How many degrees in a frame the camera rotates.
-        float deltaRate = rate * Time.deltaTime;
+        float deltaRate = rate * Time.deltaTime * power;
 
         // The vector containing deltaRate in its Z-axis.
         Vector3 rotation = new Vector3(0, 0, deltaRate);
@@ -68,7 +82,7 @@ public class CameraRotation : MonoBehaviour
     void ResetStart()
     {
         // Reassigns the second part of the method,
-        ResetMode = ResetProcess;
+        AlternateMode = ResetProcess;
     }
 
     // The second part of the reset, Process waits until Level.cs's resetTimer hits 0 to move onto the next part.
@@ -78,7 +92,7 @@ public class CameraRotation : MonoBehaviour
         if(level.resetTimer <= 0)
         {
             // Reassigns the Action delegate to ResetFinalize, the final part.
-            ResetMode = ResetFinalize;
+            AlternateMode = ResetFinalize;
         }
     }
 
@@ -89,7 +103,7 @@ public class CameraRotation : MonoBehaviour
         ResetToOrigin();
 
         // Resets the Action method.
-        ResetMode = delegate { };
+        AlternateMode = delegate { };
     }
     
     // Use this for initialization
@@ -115,7 +129,7 @@ public class CameraRotation : MonoBehaviour
             // Constantly rotates the camera.
             RotateZ();
             
-            ResetMode();
+            AlternateMode();
         }
     }
 }

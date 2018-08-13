@@ -29,6 +29,7 @@ public class PlayerControl : MonoBehaviour
     private Level level;
     private LivesRemaining livesRemaining;
 
+    public bool hasWonLevel = false;
     public UnityEvent OnDeath = new UnityEvent();
     public const int MAX_LIVES = 3;
     public const string LIVESREMAINING = "LivesRemaining";
@@ -41,10 +42,23 @@ public class PlayerControl : MonoBehaviour
     public Vector3 startingPosition;
     public float resetTimer { get { return level.resetTimer; }}
 
+    public void EnterWinPhase()
+    {
+        canMove = false;
+        rigidbody.useGravity = false;
+
+        hasWonLevel = true;
+
+        Action = delegate 
+        {
+            rigidbody.AddForce(Vector3.up);
+        };
+    }
+
     
     public void SwitchToActiveAtStart()
     {
-        if (this.activePhase == Phase.ActiveControl)
+        if (this.activePhase == Phase.ActiveControl || this.hasWonLevel == true)
             return;
 
         this.activePhase = Phase.ActiveControl;

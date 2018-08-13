@@ -16,6 +16,21 @@ public class Level : MonoBehaviour
     public bool isResetting = false;
     public bool outOfLives = false;
     public LivesRemaining livesRemaining;
+    public bool hasBeenComplete = false;
+    public float exitLevelTimer;
+    public int nextLevelIndex;
+
+    public void EnterWinPhase()
+    {
+        hasBeenComplete = true;
+        Action = delegate 
+        {
+            if (exitLevelTimer > 0)
+                exitLevelTimer -= Time.deltaTime;
+            else
+                SceneManager.LoadScene(nextLevelIndex);
+        };
+    }
 
     private void SwitchResetStateToLaunch()
     {

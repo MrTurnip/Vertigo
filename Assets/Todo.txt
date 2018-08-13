@@ -14,10 +14,12 @@ Ball resets level after falling off. (Complete)
 a. Disable VictoryFlag.
 Player runs out of lives and resets game. (Complete)
 a. GameOver banner displays. (Complete)
-a. Reset to level 0.
-Advance to next level upon reaching victory flag.
-Camera follows ball.
-Camera rotates.
+a. Reset to level 0. (Complete)
+Advance to next level upon reaching victory flag. (Complete)
+a. Create flag. (Created)
+Camera follows ball. (Complete)
+Camera rotates. (Copleted)
+a. Camera lerps into full speed. (Complete)
 Create Cave background.
 Create first level. 1 turn.
 Create second level. 2 turns.
