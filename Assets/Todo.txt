@@ -20,7 +20,11 @@ a. Create flag. (Created)
 Camera follows ball. (Complete)
 Camera rotates. (Copleted)
 a. Camera lerps into full speed. (Complete)
-Create Cave background.
+Create Cave background. (Complete)
+Create Sound FX
+a. Rolling ball.
+b. Hitting success-flag.
+c. Background music.
 Create first level. 1 turn.
 Create second level. 2 turns.
 Create third level. 3 turns.
