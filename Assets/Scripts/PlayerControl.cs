@@ -25,9 +25,12 @@ public class PlayerControl : MonoBehaviour
     }
     private bool lifeDeducted = false;
     public System.Action Action = delegate { };
+    public System.Action Sound = delegate { };
+    private System.Action AudioTechnique = delegate { };
     public UnityEvent OnFall = new UnityEvent();
     private Level level;
     private LivesRemaining livesRemaining;
+    private AudioSource marbleEffect;
 
     public bool hasWonLevel = false;
     public UnityEvent OnDeath = new UnityEvent();
@@ -109,9 +112,7 @@ public class PlayerControl : MonoBehaviour
         Action = delegate { };
         Action += SwitchToActiveAtStart;
     }
-
-
-
+    
     private void GetInput()
     {
         // If the player can't move then there's no point in getting any input.
@@ -143,10 +144,34 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    private void ScaleVolumeToMaxVelocity()
+    {
+        Vector2 directionVector2 = direction;
+        float volumeScale = directionVector2.magnitude / fullSpeed;
+        float velocityY = rigidbody.velocity.y;
+        bool isFalling = velocityY < -0.5f;
+        
+        if (volumeScale == Mathf.Infinity || isFalling == true)
+        {
+            marbleEffect.volume = 0;
+            return;
+        }
+        
+        marbleEffect.volume = volumeScale;
+    }
+
+    private void AdjustAudio()
+    {
+        AudioTechnique();
+    }
 
     public void Awake()
     {
         startingPosition = this.transform.position;
+        marbleEffect = GetComponent<AudioSource>();
+
+        Sound = AdjustAudio;
+        AudioTechnique = ScaleVolumeToMaxVelocity;
     }
 
     public void Start()
@@ -164,6 +189,7 @@ public class PlayerControl : MonoBehaviour
     public void Update()
     {
         Action();
+        Sound();
     }
 
 

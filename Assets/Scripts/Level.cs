@@ -18,7 +18,7 @@ public class Level : MonoBehaviour
     public LivesRemaining livesRemaining;
     public bool hasBeenComplete = false;
     public float exitLevelTimer;
-    public int nextLevelIndex;
+    public string nextLevel;
 
     public void EnterWinPhase()
     {
@@ -28,7 +28,7 @@ public class Level : MonoBehaviour
             if (exitLevelTimer > 0)
                 exitLevelTimer -= Time.deltaTime;
             else
-                SceneManager.LoadScene(nextLevelIndex);
+                SceneManager.LoadScene(nextLevel);
         };
     }
 
