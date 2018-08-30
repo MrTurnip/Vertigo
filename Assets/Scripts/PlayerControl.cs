@@ -43,7 +43,7 @@ public class PlayerControl : MonoBehaviour
     public const float halfSpeed = 1.0f;
     public const float stopped = 0.0f;
     public Vector3 startingPosition;
-    public float resetTimer { get { return level.resetTimer; }}
+    public float resetTimer { get { return level.resetTimer; } }
 
     public void EnterWinPhase()
     {
@@ -52,13 +52,13 @@ public class PlayerControl : MonoBehaviour
 
         hasWonLevel = true;
 
-        Action = delegate 
+        Action = delegate
         {
             rigidbody.AddForce(Vector3.up);
         };
     }
 
-    
+
     public void SwitchToActiveAtStart()
     {
         if (this.activePhase == Phase.ActiveControl || this.hasWonLevel == true)
@@ -87,7 +87,7 @@ public class PlayerControl : MonoBehaviour
 
         Action = delegate { OnDeath.Invoke(); };
         Action += SwitchToResetProcess;
-        
+
     }
 
     public void SwitchToResetProcess()
@@ -98,8 +98,8 @@ public class PlayerControl : MonoBehaviour
         this.activePhase = Phase.ResetProcessing;
 
         Action = delegate { };
-        Action += delegate {if (resetTimer <= 0) SwitchToResetExecute();  };
-        
+        Action += delegate { if (resetTimer <= 0) SwitchToResetExecute(); };
+
     }
 
     public void SwitchToResetExecute()
@@ -112,7 +112,7 @@ public class PlayerControl : MonoBehaviour
         Action = delegate { };
         Action += SwitchToActiveAtStart;
     }
-    
+
     private void GetInput()
     {
         // If the player can't move then there's no point in getting any input.
@@ -150,13 +150,13 @@ public class PlayerControl : MonoBehaviour
         float volumeScale = directionVector2.magnitude / fullSpeed;
         float velocityY = rigidbody.velocity.y;
         bool isFalling = velocityY < -0.5f;
-        
+
         if (volumeScale == Mathf.Infinity || isFalling == true)
         {
             marbleEffect.volume = 0;
             return;
         }
-        
+
         marbleEffect.volume = volumeScale;
     }
 
@@ -190,7 +190,24 @@ public class PlayerControl : MonoBehaviour
     {
         Action();
         Sound();
+        
     }
 
+    public void OnCollisionEnter(Collision collision)
+    {
+        GameObject gameObject = collision.gameObject;
+        if (gameObject.tag == "Platform")
+        {
+            this.gameObject.transform.parent = gameObject.transform;
+        }
+    }
 
+    public void OnCollisionExit(Collision collision)
+    {
+        GameObject gameObject = collision.gameObject;
+        if (gameObject.tag == "Platform")
+        {
+            this.transform.parent = null;
+        }
+    }
 }

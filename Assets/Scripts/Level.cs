@@ -20,6 +20,13 @@ public class Level : MonoBehaviour
     public float exitLevelTimer;
     public string nextLevel;
 
+    public bool isTransitionScene = false;
+
+    public void ForceNextLevel()
+    {
+        SceneManager.LoadScene(nextLevel);
+    }
+
     public void EnterWinPhase()
     {
         hasBeenComplete = true;
@@ -123,6 +130,9 @@ public class Level : MonoBehaviour
 
     public void Start()
     {
+        if (isTransitionScene)
+            return;
+
         playerObject = GameObject.FindGameObjectWithTag("Player");
         PlayerControl playerControl = playerObject.GetComponent<PlayerControl>();
         ScreenFade screenFade = GameObject.FindObjectOfType<ScreenFade>();

@@ -177,7 +177,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1331345894}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 50.512, y: 21.731, z: 24.119001}
 --- !u!4 &345153527 stripped
 Transform:
@@ -5247,8 +5247,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  rotationsPerSecond: 0.02
-  power: 1
+  rotationsPerSecond: 0.035
+  power: 0
 --- !u!114 &534669907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5884,17 +5884,17 @@ Transform:
   - {fileID: 502524592}
   - {fileID: 345153527}
   - {fileID: 1543363011}
-  - {fileID: 482972459}
   - {fileID: 2012716647}
   - {fileID: 170076735}
-  - {fileID: 394986356}
-  - {fileID: 862901504}
   - {fileID: 1367240283}
+  - {fileID: 482972459}
   - {fileID: 551210391}
   - {fileID: 720557452}
   - {fileID: 1054882401}
   - {fileID: 1392790070}
   - {fileID: 1616732157}
+  - {fileID: 394986356}
+  - {fileID: 862901504}
   - {fileID: 355477210}
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -6512,5 +6512,5 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1331345894}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: -16.431002, y: 2.693, z: -4.4500003}

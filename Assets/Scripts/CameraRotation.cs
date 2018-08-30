@@ -49,6 +49,17 @@ public class CameraRotation : MonoBehaviour
         };
     }
 
+    public void SpeedToFull()
+    {
+        AlternateMode = delegate
+        {
+            if (power < 1)
+                power += 1f * Time.deltaTime;
+            else
+                power = 1;
+        };
+    }
+
     // Called once per frame, it rotates the camera's Z-axis to make the scene spin.
     void RotateZ()
     {
@@ -118,6 +129,8 @@ public class CameraRotation : MonoBehaviour
 
         // Likewise stores starting rotation.
         startingRotation = this.transform.rotation;
+
+        AlternateMode += SpeedToFull;
     }
 
     // Update is called once per frame

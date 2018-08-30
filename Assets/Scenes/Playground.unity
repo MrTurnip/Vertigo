@@ -5758,8 +5758,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  rotationsPerSecond: 0.02
-  power: 1
+  rotationsPerSecond: 0.01
+  power: 0
 --- !u!114 &534669907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6657,7 +6657,7 @@ MonoBehaviour:
   livesRemaining: {fileID: 436790535}
   hasBeenComplete: 0
   exitLevelTimer: 2.5
-  nextLevel: Level1
+  nextLevel: Introduction1
 --- !u!1 &1368390714
 GameObject:
   m_ObjectHideFlags: 0
