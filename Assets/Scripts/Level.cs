@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using System.Linq;
+
+public interface IReset
+{
+    void ResetToStarting();
+}
 
 public class Level : MonoBehaviour
 {
@@ -49,6 +55,16 @@ public class Level : MonoBehaviour
         Action += SwitchResetStateToProcess;
         Action += delegate { inState = false; };
     }
+
+    private void ResetIResetObjects()
+    {
+        var iResets = GameObject.FindObjectsOfType<MonoBehaviour>().OfType<IReset>();
+        foreach (IReset reset in iResets)
+        {
+            reset.ResetToStarting();
+        }
+    }
+
     private void SwitchResetStateToProcess()
     {
         if (inState)
@@ -63,6 +79,7 @@ public class Level : MonoBehaviour
             if (resetTimer <= 0)
             {
                 inState = false;
+                ResetIResetObjects();
                 SwitchResetStateToFinalize();
             }
         };
